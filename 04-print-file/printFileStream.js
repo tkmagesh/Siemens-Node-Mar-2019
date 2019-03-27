@@ -2,9 +2,11 @@ var fs = require('fs');
 
 var stream = fs.createReadStream('./test.txt', { encoding : 'utf8'});
 
-stream.on('data', function(chunk){
+/*stream.on('data', function(chunk){
 	console.log(chunk);
-});
+});*/
+
+stream.pipe(process.stdout);
 
 stream.on('end', function(){
 	console.log('Thats all folks');
