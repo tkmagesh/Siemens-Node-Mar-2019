@@ -7,26 +7,19 @@ function isStatic(resourceName){
 	return staticExtns.indexOf(resExtn) >= 0;
 }
 
-module.exports = function(req, res, next){
-	var resource = req.urlObj.pathname === '/' ? 'index.html' : req.urlObj.pathname;
-	if (isStatic(resource)){
-		var resourcePath = path.join(__dirname, resource);
-		if (!fs.existsSync(resourcePath)){
-			res.statusCode = 404;
-			res.end();
-			return next();
-		}
-		var stream = fs.createReadStream(resourcePath);
-		//stream.pipe(res);
-		stream.on('data', function(chunk){
-			res.write(chunk);
-		});
-
-		stream.on('end', function(){
-			res.end();
+module.exports = function(staticResourcePath){
+	return function(req, res, next){
+		var resource = req.urlObj.pathname === '/' ? 'index.html' : req.urlObj.pathname;
+		var resourcePath = path.join(staticResourcePath, resource);
+		if (isStatic(resource) && fs.existsSync(resourcePath)){
+			var stream = fs.createReadStream(resourcePath);
+			stream.pipe(res);
+			stream.on('end', function(){
+				res.end();
+				next();
+			})
+		} else {
 			next();
-		})
-	} else {
-		next();
+		}
 	}
 }
