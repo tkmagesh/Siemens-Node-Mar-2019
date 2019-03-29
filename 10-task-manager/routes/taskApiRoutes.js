@@ -3,8 +3,10 @@ let express = require('express'),
 	taskService = require('../services/taskService');
 
 router.get('/', function(req, res){
-	let taskList = taskService.getAll();
-	res.json(taskList);
+	taskService.getAll(function(taskList){
+		res.json(taskList);	
+	});
+	
 });
 
 router.get('/:id', function(req, res){
