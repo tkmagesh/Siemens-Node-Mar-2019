@@ -3,11 +3,13 @@ let express = require('express'),
 	taskService = require('../services/taskService'),
 	TaskNotFoundError = require('../services/taskNotFoundError');
 
-router.get('/', function(req, res){
-	taskService
-		.getAll()
-		.then(taskList => res.json(taskList))
-		.catch(err => res.status(500).end());
+router.get('/', async function(req, res){
+	try{
+		let taskList = await taskService.getAll();
+		res.json(taskList);
+	} catch(e){
+		res.status(500).end();
+	}
 });
 
 router.get('/:id', function(req, res){

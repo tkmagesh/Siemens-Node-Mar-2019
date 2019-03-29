@@ -3,20 +3,20 @@ var TaskNotFoundError = require('./taskNotFoundError');
 
 
 let taskService = {
-	getAll(){
+	async getAll(){
 		return taskDb.getData();
 	},
 
-	get(taskId){
-		return taskDb
-			.getData()
-			.then(taskList => {
-				let resultTask = taskList.find(task => task.id == taskId);
-				if (!resultTask){
-					throw new TaskNotFoundError('Task not found!');
-				}
-				return resultTask;
-			});
+	async get(taskId){
+		
+		let taskList = await taskDb.getData();
+		let resultTask = taskList.find(task => task.id === taskId);
+		if (!resultTask){
+			throw new TaskNotFoundError('Task not found!');
+		} else {
+			return resultTask;
+		}
+	
 	},
 
 	addNew(newTaskData){

@@ -1,4 +1,6 @@
-const fs = require('fs');
+const fs = require('fs'),
+	util = require('util'),
+	bluebird = require('bluebird');
 
 const dbFile = require('path').join(__dirname, '../db/db.json');
 
@@ -19,7 +21,9 @@ const dbFile = require('path').join(__dirname, '../db/db.json');
 	}
 }*/
 
-let taskDb = {
+
+
+/*let taskDb = {
 	getData(){
 		var promise = new Promise(function(resolveFn, rejectFn){
 			fs.readFile(dbFile, { encoding : 'utf8'}, function(err, fileContents){
@@ -42,6 +46,35 @@ let taskDb = {
 				}
 			});	
 		});
+	}
+}*/
+
+/*let readFileAsync = util.promisify(fs.readFile),
+	writeFileAsync = util.promisify(fs.writeFile)
+
+let taskDb = {
+	getData(){
+		return readFileAsync(dbFile, { encoding : 'utf8'})
+			.then(fileContents => JSON.parse(fileContents));
+		
+	},
+	saveData(data){
+		return writeFileAsync(dbFile, JSON.stringify(data));
+	}
+}*/
+
+bluebird.promisifyAll(fs);
+
+
+
+let taskDb = {
+	getData(){
+		return fs.readFileAsync(dbFile, { encoding : 'utf8'})
+			.then(fileContents => JSON.parse(fileContents));
+		
+	},
+	saveData(data){
+		return fs.writeFileAsync(dbFile, JSON.stringify(data));
 	}
 }
 
