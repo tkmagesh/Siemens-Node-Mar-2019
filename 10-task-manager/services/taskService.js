@@ -1,19 +1,22 @@
 const taskDb = require('./taskDb');
+var TaskNotFoundError = require('./taskNotFoundError');
 
 
 let taskService = {
-	getAll(callback){
-		return taskDb.getData(function(data){
-			return callback(data);
-		});
+	getAll(){
+		return taskDb.getData();
 	},
 
 	get(taskId){
-		let resultTask = taskList.find(task => task.id == taskId);
-		if (!resultTask){
-			throw new Error('Task not found');
-		}
-		return resultTask;
+		return taskDb
+			.getData()
+			.then(taskList => {
+				let resultTask = taskList.find(task => task.id == taskId);
+				if (!resultTask){
+					throw new TaskNotFoundError('Task not found!');
+				}
+				return resultTask;
+			});
 	},
 
 	addNew(newTaskData){

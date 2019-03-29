@@ -1,20 +1,26 @@
 let express = require('express'),
 	router = express.Router(),
-	taskService = require('../services/taskService');
+	taskService = require('../services/taskService'),
+	TaskNotFoundError = require('../services/taskNotFoundError');
 
 router.get('/', function(req, res){
-	taskService.getAll(function(taskList){
-		res.json(taskList);	
-	});
-	
+	taskService
+		.getAll()
+		.then(taskList => res.json(taskList))
+		.catch(err => res.status(500).end());
 });
 
 router.get('/:id', function(req, res){
-	try{
-		res.json(taskService.get(parseInt(req.params.id)));
-	} catch (e){
-		res.status(404).end();
-	}
+	taskService
+		.get(parseInt(req.params.id))
+		.then(task => res.json(task))
+		.catch(err => {
+			if (err instanceof TaskNotFoundError){
+				res.status(404).end();	
+			} else if (err) {
+				res.status(500).end();
+			}
+		});
 });
 
 router.post('/', function(req, res){
