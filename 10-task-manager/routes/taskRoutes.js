@@ -1,3 +1,5 @@
+/* TODO : update this with taskService */
+
 var express = require('express'),
 	router = express.Router();
 
@@ -32,8 +34,5 @@ router.post('/new', function(req, res){
 
 });
 
-router.get('/api', function(req, res){
-	res.json(taskList);
-});
 
 module.exports = router;
